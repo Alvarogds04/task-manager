@@ -1,5 +1,9 @@
 {
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.11",
+    "tailwindcss": "^4.1.11"
   }
 }

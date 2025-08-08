@@ -1,34 +1,42 @@
+import { ReactNode } from "react";
 import Sidebar, { Project } from "../components/Sidebar";
 
 export default function MainLayout({
-  children,
   header,
+  children,
   sidebarCollapsed,
   onToggleSidebar,
   selectedProjectId,
   onSelectProject,
 }: {
-  children: React.ReactNode;
-  header: React.ReactNode;
+  header: ReactNode;
+  children: ReactNode;
   sidebarCollapsed: boolean;
   onToggleSidebar: () => void;
   selectedProjectId?: string;
   onSelectProject: (pj: Project) => void;
 }) {
   return (
-    <div className="flex min-h-screen bg-gray-100 text-gray-900">
-      {/* Sidebar fijo a la izquierda */}
-      <Sidebar
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={onToggleSidebar}
-        selected={selectedProjectId}
-        onSelect={onSelectProject}
-      />
+    <div className="min-h-screen app-bg">
+      {header}
 
-      {/* Contenido principal */}
-      <div className="flex-1 min-w-0 flex flex-col">
-        {header}
-        <main className="px-4 py-4">{children}</main>
+      <div className="flex">
+        <aside className="w-72 shrink-0">
+          <div className="sticky top-[72px] h-[calc(100vh-72px)] p-4">
+            <Sidebar
+              collapsed={sidebarCollapsed}
+              onToggle={onToggleSidebar}
+              selectedProjectId={selectedProjectId}
+              onSelectProject={onSelectProject}
+            />
+          </div>
+        </aside>
+
+        <main className="flex-1 px-6 py-6">
+          <div className="mx-auto w-full max-w-[1400px]">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

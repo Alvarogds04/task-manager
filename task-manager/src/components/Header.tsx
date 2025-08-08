@@ -1,3 +1,5 @@
+import ThemeToggle from "./ThemeToggle";
+
 export default function Header({
   title,
   tab,
@@ -8,31 +10,32 @@ export default function Header({
   onTab: (t: "kanban" | "calendar") => void;
 }) {
   return (
-    <header className="sticky top-0 bg-white/80 backdrop-blur border-b z-10">
-      <div className="px-4 pt-4 pb-3">
-        <h1 className="text-2xl md:text-3xl font-semibold tracking-tight text-gray-900 text-center">
-          {title}
-        </h1>
-
-        {/* Botones centrales debajo del título */}
+    <header className="sticky top-0 z-20 border-b app-border app-surface backdrop-blur">
+      <div className="mx-auto max-w-[1400px] px-4 pt-4 pb-3">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight app-text">
+            {title}
+          </h1>
+          <ThemeToggle />
+        </div>
         <div className="mt-3 flex justify-center">
-          <div className="grid grid-cols-2 gap-3 w-full max-w-xl">
+          <div className="bg-[color:var(--card)] border app-border rounded-2xl p-1 shadow-sm inline-flex">
             <button
               onClick={() => onTab("kanban")}
-              className={`py-3 rounded-xl text-center border transition ${
+              className={`px-6 py-2 rounded-xl transition ${
                 tab === "kanban"
-                  ? "bg-gray-900 text-white border-gray-900"
-                  : "bg-white hover:bg-gray-50 border-gray-300 text-gray-800"
+                  ? "bg-gray-900 text-white dark:bg-white dark:text-black"
+                  : "app-text hover:opacity-90"
               }`}
             >
               Kanban
             </button>
             <button
               onClick={() => onTab("calendar")}
-              className={`py-3 rounded-xl text-center border transition ${
+              className={`px-6 py-2 rounded-xl transition ${
                 tab === "calendar"
-                  ? "bg-gray-900 text-white border-gray-900"
-                  : "bg-white hover:bg-gray-50 border-gray-300 text-gray-800"
+                  ? "bg-gray-900 text-white dark:bg-white dark:text-black"
+                  : "app-text hover:opacity-90"
               }`}
             >
               Calendario

@@ -1,104 +1,123 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-export type Project = { id: string; name: string };
+export interface Project {
+  id: string;
+  name: string;
+  user_id?: string | null;
+}
 
 export default function Sidebar({
   collapsed,
-  onToggleCollapse,
-  selected,
-  onSelect,
+  onToggle,
+  selectedProjectId,
+  onSelectProject,
 }: {
   collapsed: boolean;
-  onToggleCollapse: () => void;
-  selected?: string;
-  onSelect: (project: Project) => void;
+  onToggle: () => void;
+  selectedProjectId?: string;
+  onSelectProject: (p: Project) => void;
 }) {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [newName, setNewName] = useState("");
+  const [name, setName] = useState("");
 
   useEffect(() => {
-    (async () => {
-      const { data, error } = await supabase.from("projects").select("*").order("name");
-      if (!error && data) setProjects(data as Project[]);
-    })();
+    const load = async () => {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .order("name");
+      if (error) {
+        console.error("load projects", error);
+        alert(error.message);
+      } else {
+        setProjects(data as Project[]);
+      }
+    };
+    load();
+
+    const ch = supabase
+      .channel("projects-rt")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "projects" },
+        () => load()
+      )
+      .subscribe();
+    return () => supabase.removeChannel(ch);
   }, []);
 
-  const create = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newName.trim()) return;
+  const createProject = async () => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+
     const { data, error } = await supabase
       .from("projects")
-      .insert({ name: newName.trim() })
+      .insert({ name: trimmed }) // DEFAULT auth.uid() rellena user_id
       .select()
       .single();
-    if (error) return window.alert(error.message);
-    const pj = data as Project;
-    setProjects((p) => [...p, pj]);
-    onSelect(pj);
-    setNewName("");
+
+    if (error) {
+      console.error("insert project", error);
+      alert(error.message);
+      return;
+    }
+
+    setProjects((prev) => [...prev, data as Project]);
+    setName("");
+    onSelectProject(data as Project);
   };
 
-  const width = collapsed ? "w-16" : "w-72";
-
   return (
-    <aside
-      className={[
-        "bg-white border-r h-screen sticky top-0",
-        "overflow-y-auto overflow-x-hidden",
-        "transition-all duration-300",
-        width,
-      ].join(" ")}
-    >
-      {/* Header */}
-      <div className="p-3 border-b flex items-center justify-between">
+    <div className="card p-3 app-card h-full flex flex-col">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="font-semibold">Proyectos</h3>
         <button
-          className="border rounded px-2 py-1 text-sm hover:bg-gray-100"
-          onClick={onToggleCollapse}
-          title={collapsed ? "Expandir" : "Colapsar"}
+          className="border app-border rounded-full w-8 h-8 hover:bg-gray-50 dark:hover:bg-white/10 transition"
+          onClick={onToggle}
+          title={collapsed ? "Mostrar" : "Ocultar"}
         >
           {collapsed ? "»" : "«"}
         </button>
-        {!collapsed && <h2 className="font-semibold">Proyectos</h2>}
       </div>
 
-      {/* Lista de proyectos */}
-      <nav className="p-2">
-        {projects.map((p) => (
-          <button
-            key={p.id}
-            onClick={() => onSelect(p)}
-            className={[
-              "w-full text-left rounded mb-1 hover:bg-gray-100 transition-colors",
-              "px-3 py-2",
-              selected === p.id ? "bg-gray-200 font-medium" : "",
-              collapsed ? "px-0 text-center" : "",
-            ].join(" ")}
-            title={collapsed ? p.name : undefined}
-          >
-            {collapsed ? p.name.slice(0, 1).toUpperCase() : p.name}
-          </button>
-        ))}
-        {projects.length === 0 && !collapsed && (
-          <div className="text-sm text-gray-500 px-3 py-2">Sin proyectos</div>
+      <div className="space-y-1 overflow-y-auto flex-1">
+        {projects.length === 0 && (
+          <div className="text-sm app-muted">Sin proyectos aún</div>
         )}
-      </nav>
+        {projects.map((p) => {
+          const active = p.id === selectedProjectId;
+          return (
+            <button
+              key={p.id}
+              onClick={() => onSelectProject(p)}
+              className={`w-full text-left px-3 py-2 rounded-xl border app-border hover:bg-gray-50 dark:hover:bg-white/10 transition ${
+                active
+                  ? "bg-gray-900 text-white dark:bg-white dark:text-black"
+                  : "app-card"
+              }`}
+            >
+              {p.name}
+            </button>
+          );
+        })}
+      </div>
 
-      {/* Crear proyecto (oculto si colapsado) */}
-      {!collapsed && (
-        <form onSubmit={create} className="p-3 border-t mt-auto">
-          <label className="block text-sm mb-1">Nuevo proyecto</label>
-          <div className="flex gap-2">
-            <input
-              className="border rounded px-3 py-2 flex-1"
-              placeholder="Ej. Personal"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-            />
-            <button className="px-3 rounded bg-black text-white">Crear</button>
-          </div>
-        </form>
-      )}
-    </aside>
+      <div className="mt-3">
+        <div className="text-sm app-muted mb-1">Nuevo proyecto</div>
+        <div className="flex gap-2">
+          <input
+            className="flex-1 border app-border rounded-xl px-3 py-2 app-card"
+            placeholder="Ej. Personal"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && createProject()}
+          />
+          <button className="btn-primary" onClick={createProject}>
+            Crear
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
