@@ -84,7 +84,7 @@ export default function Sidebar({
         )}
       </nav>
 
-      {/* Crear proyecto (oculto si está colapsado) */}
+      {/* Crear proyecto (oculto si colapsado) */}
       {!collapsed && (
         <form onSubmit={create} className="p-3 border-t mt-auto">
           <label className="block text-sm mb-1">Nuevo proyecto</label>
