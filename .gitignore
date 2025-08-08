@@ -3,3 +3,4 @@ node_modules
 dist
 .vscode
 .DS_Store
+git remote add origin https://github.com/Alvarogds04/task-manager.git
