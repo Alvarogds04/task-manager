@@ -10,7 +10,6 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.126",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
     "react": "^19.1.1",
@@ -47,9 +46,11 @@
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.11",
+    "@types/node": "^24.2.1",
     "autoprefixer": "^10.4.21",
     "concurrently": "^9.2.0",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "vite": "^7.1.1"
   }
 }

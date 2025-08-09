@@ -1,48 +1,25 @@
-// src/components/Header.tsx
-import ThemeToggle from "./ThemeToggle";
+import { supabase } from "../lib/supabase";
+import ThemeToggle from './ThemeToggle';
 
-export default function Header({
-  title,
-  tab,
-  onTab,
-}: {
-  title: string;
-  tab: "kanban" | "calendar";
-  onTab: (t: "kanban" | "calendar") => void;
-}) {
+export default function Header() {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    // AuthGate detecta sesión null y muestra Login automáticamente
+  };
+
   return (
-    <header className="sticky top-0 z-20 border-b app-border app-surface backdrop-blur">
-      <div className="mx-auto max-w-[1400px] px-4 pt-4 pb-3">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl md:text-3xl font-semibold tracking-tight app-text">
-            {title}
-          </h1>
-          <ThemeToggle />
-        </div>
-        <div className="mt-3 flex justify-center">
-          <div className="bg-[color:var(--card)] border app-border rounded-2xl p-1 shadow-sm inline-flex">
-            <button
-              onClick={() => onTab("kanban")}
-              className={`px-6 py-2 rounded-xl transition ${
-                tab === "kanban"
-                  ? "bg-gray-900 text-white dark:bg-white dark:text-black"
-                  : "app-text hover:opacity-90"
-              }`}
-            >
-              Kanban
-            </button>
-            <button
-              onClick={() => onTab("calendar")}
-              className={`px-6 py-2 rounded-xl transition ${
-                tab === "calendar"
-                  ? "bg-gray-900 text-white dark:bg-white dark:text-black"
-                  : "app-text hover:opacity-90"
-              }`}
-            >
-              Calendario
-            </button>
-          </div>
-        </div>
+    <header className="flex items-center justify-between px-6 py-4">
+      <h1 className="text-2xl font-semibold tracking-tight">Gestor de tareas</h1>
+
+      <div className="flex items-center gap-3">
+        <ThemeToggle />
+        <button
+          onClick={handleLogout}
+          className="rounded-lg border px-3 py-1.5 text-sm hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-black/10"
+          title="Cerrar sesión"
+        >
+          Cerrar sesión
+        </button>
       </div>
     </header>
   );

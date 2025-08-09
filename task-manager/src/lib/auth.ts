@@ -1,15 +1,17 @@
 import { supabase } from "./supabase";
 
-export async function signInWithEmail(email: string) {
-  const { error } = await supabase.auth.signInWithOtp({ email });
-  if (error) throw error;
+export async function signInWithGoogle() {
+  return supabase.auth.signInWithOAuth({ provider: "google" });
+}
+
+export async function signInWithEmail(email: string, password: string) {
+  return supabase.auth.signInWithPassword({ email, password });
+}
+
+export async function signUpWithEmail(email: string, password: string) {
+  return supabase.auth.signUp({ email, password });
 }
 
 export async function signOut() {
-  await supabase.auth.signOut();
-}
-
-export async function getCurrentUser() {
-  const { data } = await supabase.auth.getUser();
-  return data.user;
+  return supabase.auth.signOut();
 }

@@ -1,4 +1,0 @@
-@import "tailwindcss";
-
-/* Dile a Tailwind dónde escanear tus clases */
-@source "./src/**/*.{js,ts,jsx,tsx}";
