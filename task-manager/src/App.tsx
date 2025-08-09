@@ -1,39 +1,38 @@
+// src/App.tsx
 import { useState } from "react";
-import MainLayout from "./layouts/MainLayout";
 import Header from "./components/Header";
+import MainLayout from "./layouts/MainLayout";
 import Kanban from "./components/Kanban";
 import CalendarView from "./components/CalendarView";
-import { Project } from "./components/Sidebar";
+import type { Project } from "./components/Sidebar";
 
 export default function App() {
+  const [tab, setTab] = useState<"kanban" | "calendar">("kanban");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [projectId, setProjectId] = useState<string>();
-  const [projectName, setProjectName] = useState<string>("");
-  const [tab, setTab] = useState<"kanban"|"calendar">("kanban");
-
-  const selectProject = (pj: Project) => {
-    setProjectId(pj.id);
-    setProjectName(pj.name);
-  };
+  const [project, setProject] = useState<Project | null>(null);
 
   return (
     <MainLayout
-      sidebarCollapsed={sidebarCollapsed}
-      onToggleSidebar={() => setSidebarCollapsed((v) => !v)}
-      selectedProjectId={projectId}
-      onSelectProject={selectProject}
       header={
         <Header
-          title={projectName ? `Gestor de tareas — ${projectName}` : "Gestor de tareas"}
+          title="Gestor de tareas"
           tab={tab}
           onTab={setTab}
         />
       }
+      sidebarCollapsed={sidebarCollapsed}
+      onToggleSidebar={() => setSidebarCollapsed((v) => !v)}
+      selectedProjectId={project?.id}
+      onSelectProject={setProject}
     >
       {tab === "kanban" ? (
-        <Kanban projectId={projectId} sidebarCollapsed={sidebarCollapsed} projectName={projectName} />
+        <Kanban
+          projectId={project?.id}
+          projectName={project?.name}
+          sidebarCollapsed={sidebarCollapsed}
+        />
       ) : (
-        <CalendarView projectId={projectId} />
+        <CalendarView projectId={project?.id} />
       )}
     </MainLayout>
   );

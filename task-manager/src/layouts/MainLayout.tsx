@@ -1,3 +1,4 @@
+// src/layouts/MainLayout.tsx
 import { ReactNode } from "react";
 import Sidebar, { Project } from "../components/Sidebar";
 
@@ -33,9 +34,7 @@ export default function MainLayout({
         </aside>
 
         <main className="flex-1 px-6 py-6">
-          <div className="mx-auto w-full max-w-[1400px]">
-            {children}
-          </div>
+          <div className="mx-auto w-full max-w-[1400px]">{children}</div>
         </main>
       </div>
     </div>

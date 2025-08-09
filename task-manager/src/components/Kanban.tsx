@@ -246,7 +246,8 @@ export default function Kanban({
   }, [menuOpenFor]);
 
   const handleDelete = async (task: Task) => {
-    if (!confirm(`¿Borrar "${task.title}"?`)) return;
+    const ok = typeof window !== "undefined" && window.confirm(`¿Borrar "${task.title}"?`);
+    if (!ok) return;
     const { error } = await supabase.from("tasks").delete().eq("id", task.id);
     if (error) alert(error.message);
   };

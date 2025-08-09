@@ -1,3 +1,4 @@
+// src/components/Sidebar.tsx
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
@@ -44,16 +45,26 @@ export default function Sidebar({
         () => load()
       )
       .subscribe();
-    return () => supabase.removeChannel(ch);
+
+    return () => {
+      supabase.removeChannel(ch); // cleanup SIN Promise
+    };
   }, []);
 
   const createProject = async () => {
     const trimmed = name.trim();
     if (!trimmed) return;
 
+    const { data: u } = await supabase.auth.getUser();
+    const uid = u.user?.id;
+    if (!uid) {
+      alert("Necesitas iniciar sesión.");
+      return;
+    }
+
     const { data, error } = await supabase
       .from("projects")
-      .insert({ name: trimmed }) // DEFAULT auth.uid() rellena user_id
+      .insert({ name: trimmed, user_id: uid }) // ← fuerza owner
       .select()
       .single();
 

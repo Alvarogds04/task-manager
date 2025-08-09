@@ -381,14 +381,14 @@
   .flex-wrap {
     flex-wrap: wrap;
   }
+  .place-items-center {
+    place-items: center;
+  }
   .items-center {
     align-items: center;
   }
   .items-end {
     align-items: flex-end;
-  }
-  .items-start {
-    align-items: flex-start;
   }
   .justify-between {
     justify-content: space-between;
@@ -464,9 +464,6 @@
     border-left-style: var(--tw-border-style);
     border-left-width: 4px;
   }
-  .border-\[var\(--primary\)\] {
-    border-color: var(--primary);
-  }
   .border-amber-500 {
     border-color: var(--color-amber-500);
   }
@@ -487,9 +484,6 @@
   }
   .bg-\[var\(--p-medium\)\] {
     background-color: var(--p-medium);
-  }
-  .bg-\[var\(--primary\)\] {
-    background-color: var(--primary);
   }
   .bg-black {
     background-color: var(--color-black);
@@ -562,9 +556,6 @@
   }
   .pr-6 {
     padding-right: calc(var(--spacing) * 6);
-  }
-  .pr-8 {
-    padding-right: calc(var(--spacing) * 8);
   }
   .pb-3 {
     padding-bottom: calc(var(--spacing) * 3);
